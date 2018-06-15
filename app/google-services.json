@@ -1,31 +1,31 @@
 {
   "project_info": {
-    "project_number": "50794364599",
-    "firebase_url": "https://kotlincloudfirebase.firebaseio.com",
-    "project_id": "kotlincloudfirebase",
-    "storage_bucket": "kotlincloudfirebase.appspot.com"
+    "project_number": "322025107614",
+    "firebase_url": "https://authentication-fa658.firebaseio.com",
+    "project_id": "authentication-fa658",
+    "storage_bucket": "authentication-fa658.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:50794364599:android:27ab2cc0be63457f",
+        "mobilesdk_app_id": "1:322025107614:android:6cb2962d11641e12",
         "android_client_info": {
-          "package_name": "com.example.tejas.kotlinexample2"
+          "package_name": "com.example.knoxpo.todolistfirestore"
         }
       },
       "oauth_client": [
         {
-          "client_id": "50794364599-gp5ut2bar7u0e79pculbcl4stb0i8v9u.apps.googleusercontent.com",
+          "client_id": "322025107614-1svh1od12474r4bbnna3har8j13lm8ht.apps.googleusercontent.com",
           "client_type": 3
         },
         {
-          "client_id": "50794364599-gp5ut2bar7u0e79pculbcl4stb0i8v9u.apps.googleusercontent.com",
+          "client_id": "322025107614-1svh1od12474r4bbnna3har8j13lm8ht.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAdiso9-siGV3uZXVafceQmAaxgvtNVXBQ"
+          "current_key": "AIzaSyAkE0lfWeY_bczY_on6AQfAk5RBE3xP7jQ"
         }
       ],
       "services": {
@@ -43,24 +43,24 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:50794364599:android:41e4e774d6a3f81a",
+        "mobilesdk_app_id": "1:322025107614:android:27ab2cc0be63457f",
         "android_client_info": {
-          "package_name": "com.knoxpo.kotlincloudfirebase"
+          "package_name": "com.example.tejas.kotlinexample2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "50794364599-gp5ut2bar7u0e79pculbcl4stb0i8v9u.apps.googleusercontent.com",
+          "client_id": "322025107614-1svh1od12474r4bbnna3har8j13lm8ht.apps.googleusercontent.com",
           "client_type": 3
         },
         {
-          "client_id": "50794364599-gp5ut2bar7u0e79pculbcl4stb0i8v9u.apps.googleusercontent.com",
+          "client_id": "322025107614-1svh1od12474r4bbnna3har8j13lm8ht.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAdiso9-siGV3uZXVafceQmAaxgvtNVXBQ"
+          "current_key": "AIzaSyAkE0lfWeY_bczY_on6AQfAk5RBE3xP7jQ"
         }
       ],
       "services": {

@@ -1,5 +1,7 @@
 package com.example.tejas.kotlinexample2.Fragments
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -11,21 +13,33 @@ import android.widget.Toast
 import com.example.tejas.kotlinexample2.Models.ToDo
 import com.example.tejas.kotlinexample2.Models.ToDoCollection
 import com.example.tejas.kotlinexample2.R
+import com.example.tejas.kotlinexample2.ShareIdDialogBox
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_todo_list.view.*
+import kotlinx.android.synthetic.main.list_todo.*
 import kotlinx.android.synthetic.main.list_todo.view.*
 import java.util.*
 
 
 private val TAG = "ToDoListFragment"
 
-class ToDoListFragment : Fragment() {
+class ToDoListFragment : Fragment(){
+
+
     var count = 0
+
     private var toDoList: ArrayList<ToDo> = ArrayList()
     var db: FirebaseFirestore = FirebaseFirestore.getInstance()
-    var adapter = ToDoAdapter(toDoList)
+
+    private var adapter = ToDoAdapter(toDoList)
+    private var mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val REQUEST_USER_ID = 0
+    private var todoId: String? = null
+    private var shareUserId: String? = null
+    private var uid = mAuth.currentUser!!.uid
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -37,8 +51,9 @@ class ToDoListFragment : Fragment() {
         fetchData()
 
         v.addToDoFAB.setOnClickListener {
-            addData(db, adapter)
+            addData()
         }
+
 
         return v
     }
@@ -57,23 +72,67 @@ class ToDoListFragment : Fragment() {
 
             }
 
+            itemView.shareToDoBtn.setOnClickListener {
+                showDialog(todo.mToDoId!!)
+
+
+            }
+
             itemView.editIB.setOnClickListener {
 
                 val todoRef: DocumentReference = db.collection(ToDoCollection.NAME).document(todo.mToDoId!!)
-                val updatedMap: MutableMap<String, Any> = mutableMapOf(ToDoCollection.Fields.TITLE to "Updated ToDo", ToDoCollection.Fields.ISCHECKED to true)
+                var isChecked: Boolean = toDoCHB.isChecked
+                val updatedMap: MutableMap<String, Any> = mutableMapOf(ToDoCollection.Fields.TITLE to "Nency:-Updated ToDo", ToDoCollection.Fields.ISCHECKED to isChecked)
                 todoRef.update(updatedMap).addOnSuccessListener(OnSuccessListener<Void>() {
 
                     Toast.makeText(activity, "updated", Toast.LENGTH_SHORT).show()
                 })
 
             }
+
+            itemView.toDoCHB.setOnClickListener {
+
+                val todoRef: DocumentReference = db.collection(ToDoCollection.NAME).document(todo.mToDoId!!)
+                var isChecked: Boolean = toDoCHB.isChecked
+
+                val updatedMap: MutableMap<String, Any> = mutableMapOf(ToDoCollection.Fields.ISCHECKED to isChecked)
+                todoRef.update(updatedMap)
+            }
+
         }
 
     }
 
+
+    fun showDialog(todoId: String) {
+        var dialog = ShareIdDialogBox.newInstance(todoId)
+        var fm = this.fragmentManager
+        dialog.setTargetFragment(this, REQUEST_USER_ID)
+        dialog.show(fm, "dialog")
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+        if (requestCode == REQUEST_USER_ID) {
+
+            todoId = data!!.getStringExtra(ShareIdDialogBox.ARGS_TODO_ID)
+            shareUserId = data.getStringExtra(ShareIdDialogBox.ARGS_SHARED_USER_ID)
+            val todoRef: DocumentReference = db.collection(ToDoCollection.NAME).document(this.todoId!!)
+            var isChecked: Boolean = toDoCHB.isChecked
+
+            val updatedMap: MutableMap<String, Any?> = mutableMapOf(ToDoCollection.Fields.TITLE to "Nency:-Updated ToDo", ToDoCollection.Fields.ISCHECKED to isChecked, ToDoCollection.Fields.SHAREID to shareUserId)
+            todoRef.update(updatedMap)
+
+
+        }
+    }
+
+
     inner class ToDoAdapter(toDos: ArrayList<ToDo>) : RecyclerView.Adapter<ToDoHolder>() {
 
-     private var mToDos: ArrayList<ToDo> = ArrayList()
+        private var mToDos: ArrayList<ToDo> = ArrayList()
 
         init {
             mToDos = toDos
@@ -101,9 +160,9 @@ class ToDoListFragment : Fragment() {
 
     private fun fetchData() {
 
-
         db.collection(ToDoCollection.NAME)
-                .addSnapshotListener { querySnapshot, _ ->
+                .whereEqualTo(ToDoCollection.Fields.USERID, uid)
+                .addSnapshotListener { querySnapshot, error ->
                     toDoList.clear()
                     if (querySnapshot != null) {
                         for (document in querySnapshot.documents) {
@@ -114,6 +173,7 @@ class ToDoListFragment : Fragment() {
                             toDoList.add(todo)
                         }
                     }
+                    Toast.makeText(activity, error?.message ?: "No error", Toast.LENGTH_LONG).show()
                     adapter.notifyDataSetChanged()
 
                 }
@@ -131,6 +191,7 @@ class ToDoListFragment : Fragment() {
 
                         for (document in it.result) {
                             todo = ToDo()
+                            todo.mUserId = document.get(ToDoCollection.Fields.USERID).toString()
                             todo.mToDoId = document.id
                             todo.mToDoTitle = document.get(ToDoCollection.Fields.TITLE).toString()
                             todo.mIsChecked = (document.get(ToDoCollection.Fields.ISCHECKED) as Boolean?)
@@ -145,10 +206,11 @@ class ToDoListFragment : Fragment() {
 
     }
 
-    private fun addData(db: FirebaseFirestore, mAdapter: ToDoAdapter) {
-        val map: MutableMap<String, Any> = mutableMapOf(ToDoCollection.Fields.TITLE to "todo $count", ToDoCollection.Fields.ISCHECKED to false)
+    private fun addData() {
+
+        val map: MutableMap<String, Any> = mutableMapOf(ToDoCollection.Fields.TITLE to "Nency:-todo $count", ToDoCollection.Fields.ISCHECKED to false, ToDoCollection.Fields.USERID to uid)
         db.collection(ToDoCollection.NAME).add(map as Map<String, Any>)
-        mAdapter.notifyDataSetChanged()
+        adapter.notifyDataSetChanged()
         count++
     }
 

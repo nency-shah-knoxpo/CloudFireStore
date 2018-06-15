@@ -9,14 +9,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.TodoListActivity">
+        <activity android:name=".Activities.TodoListActivity" />
+        <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Fragments.ToDoListFragment"></activity>
+        <activity android:name=".Activities.SharedToDoActivity" />
+        <activity android:name=".Fragments.SharedToDoFragment"></activity>
     </application>
 
 </manifest>
